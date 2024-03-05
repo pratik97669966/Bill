@@ -57,7 +57,7 @@ router.post('/:ownerMobile', async (req, res) => {
     } else {
       await collection.insertOne(req.body);
     }
-    const updatedUser = await collection.findOne({ ownerMobile: req.params.ownerMobile });
+    const updatedUser =  await collection.find().toArray();
     res.json(updatedUser);
   } catch (error) {
     console.error('Error creating or updating user:', error);
