@@ -15,7 +15,6 @@ client.connect()
     .then(() => {
         console.log('Connected to MongoDB');
         app.locals.db = client.db('Clients');
-
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
         app.use(cookieParser());
