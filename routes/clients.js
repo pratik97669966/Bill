@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-router.get('/', async (req, res) => {
+router.get('/clients/', async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (!db) {
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   }
 });
 // GET a user by uId
-router.get('/:uId', async (req, res) => {
+router.get('/clients/:uId', async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (!db) {
@@ -39,7 +39,7 @@ router.get('/:uId', async (req, res) => {
 });
 
 // POST (upsert) a user by uId
-router.post('/:uId', async (req, res) => {
+router.post('/clients/:uId', async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (!db) {
@@ -65,7 +65,7 @@ router.post('/:uId', async (req, res) => {
   }
 });
 // PUT (upsert) a user by uId
-router.put('/:uId', async (req, res) => {
+router.put('/clients/:uId', async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (!db) {
@@ -91,7 +91,7 @@ router.put('/:uId', async (req, res) => {
   }
 });
 // DELETE a user by uId
-router.delete('/:uId', async (req, res) => {
+router.delete('/clients/:uId', async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (!db) {
