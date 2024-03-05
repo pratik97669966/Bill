@@ -5,7 +5,8 @@ const logger = require('morgan');
 const { MongoClient } = require('mongodb');
 const app = express();
 const server = require("http").createServer(app);
-const quotesRouter = require('./routes/clients');
+const clientsRouter = require('./routes/clients');
+const productsRouter = require('./routes/products');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
 const uri = 'mongodb+srv://billing:pratik@billing.bt47ztc.mongodb.net/?retryWrites=true&w=majority&appName=Billing';
@@ -19,7 +20,8 @@ client.connect()
         app.use(express.urlencoded({ extended: false }));
         app.use(cookieParser());
         app.use(express.static(path.join(__dirname, 'public')));
-        app.use('/clients', quotesRouter);
+        app.use('/clients', clientsRouter);
+        app.use('/products', productsRouter);
         module.exports = app;
 
     })
