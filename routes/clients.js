@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
-    const collection = db.collection('UserData');
+    const collection = db.collection('clients');
     const user = await collection.find().toArray();
     if (!user) {
       return res.status(404).json({ error: 'Users not found' });
@@ -26,7 +26,7 @@ router.get('/:ownerMobile', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
-    const collection = db.collection('UserData');
+    const collection = db.collection('clients');
     const user = await collection.findOne({ ownerMobile: req.params.ownerMobile });
     // if (!user) {
     //   return res.status(404).json({ error: 'User not found' });
@@ -46,7 +46,7 @@ router.post('/:ownerMobile', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
-    const collection = db.collection('UserData');
+    const collection = db.collection('clients');
     const existingUser = await collection.findOne({ ownerMobile: req.params.ownerMobile });
     if (existingUser) {
       await collection.findOneAndUpdate(
@@ -72,7 +72,7 @@ router.put('/:ownerMobile', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
-    const collection = db.collection('UserData');
+    const collection = db.collection('clients');
     const existingUser = await collection.findOne({ ownerMobile: req.params.ownerMobile });
     if (existingUser) {
       await collection.findOneAndUpdate(
@@ -98,7 +98,7 @@ router.delete('/:ownerMobile', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
-    const collection = db.collection('UserData');
+    const collection = db.collection('clients');
     await collection.findOneAndDelete({ ownerMobile: req.params.ownerMobile });
     const activeUsers = await collection.find().toArray();
     res.json(activeUsers);

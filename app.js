@@ -14,7 +14,7 @@ const client = new MongoClient(uri);
 client.connect()
     .then(() => {
         console.log('Connected to MongoDB');
-        app.locals.db = client.db('Clients');
+        app.locals.db = client.db('Entity');
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
         app.use(cookieParser());
