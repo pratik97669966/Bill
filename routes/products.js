@@ -78,7 +78,7 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// DELETE a user by ownerMobile
+// DELETE a product by _id
 router.delete('/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -87,13 +87,16 @@ router.delete('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Internal server error' });
     }
     const collection = db.collection('products');
-    await collection.findOneAndDelete({ _id: req.params.id });
-    const activeUsers = await collection.find().toArray();
-    res.json(activeUsers);
+    const ObjectId = require('mongodb').ObjectId; // Import ObjectId
+    const query = { _id: ObjectId(req.params.id) }; // Construct the query using ObjectId
+    await collection.findOneAndDelete(query);
+    const remainingProducts = await collection.find().toArray();
+    res.json(remainingProducts);
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error deleting product:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
