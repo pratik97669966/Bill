@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// PUT (upsert) a user by ownerMobile
+// PUT (upsert) a user by id
 router.put('/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -62,24 +62,27 @@ router.put('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Internal server error' });
     }
     const collection = db.collection('products');
-    const existingUser = await collection.findOne({ _id: req.params.id });
-    if (existingUser) {
+    const query = { _id: new ObjectId(req.params.id) }; // Construct the query using ObjectId
+    const existingProduct = await collection.findOne(query);
+
+    if (existingProduct) {
       await collection.findOneAndUpdate(
-        { _id: req.params.id },
+        query,
         { $set: req.body },
         { returnOriginal: false }
       );
+      const updatedUser = await collection.find().toArray();
+      res.json(updatedUser);
     } else {
       await collection.insertOne(req.body);
+      const updatedUser = await collection.find().toArray();
+      res.json(updatedUser);
     }
-    const updatedUser = await collection.findOne({ ownerMobile: req.params.ownerMobile });
-    res.json(updatedUser);
   } catch (error) {
-    console.error('Error creating or updating user:', error);
+    console.error('Error creating or updating product:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 // DELETE a product by _id
 router.delete('/:id', async (req, res) => {
   try {
