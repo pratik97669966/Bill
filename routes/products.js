@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const router = express.Router();
 router.get('/', async (req, res) => {
   try {
@@ -78,6 +79,7 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 // DELETE a product by _id
 router.delete('/:id', async (req, res) => {
   try {
@@ -87,16 +89,14 @@ router.delete('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Internal server error' });
     }
     const collection = db.collection('products');
-    const ObjectId = require('mongodb').ObjectId; // Import ObjectId
-    const query = { _id: ObjectId(req.params.id) }; // Construct the query using ObjectId
-    await collection.findOneAndDelete(query);
+    const query = { _id: new ObjectId(req.params.id) }; // Construct the query using ObjectId
+    await collection.deleteOne(query); // Use deleteOne to delete the document
     const remainingProducts = await collection.find().toArray();
     res.json(remainingProducts);
   } catch (error) {
-    console.error('Error deleting product:', error);
+    console.error('Error deleting product:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 module.exports = router;
