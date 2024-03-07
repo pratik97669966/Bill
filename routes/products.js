@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// PUT (upsert) a user by id
+// PUT (upsert) a product by id
 router.put('/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -66,18 +66,22 @@ router.put('/:id', async (req, res) => {
     const existingProduct = await collection.findOne(query);
 
     if (existingProduct) {
+      // Remove _id from req.body to avoid updating it
+      delete req.body._id;
+      
       await collection.findOneAndUpdate(
         query,
         { $set: req.body },
         { returnOriginal: false }
       );
-      const updatedUser = await collection.find().toArray();
-      res.json(updatedUser);
     } else {
+      // If the product does not exist, insert it with the provided _id
+      req.body._id = new ObjectId(req.params.id);
       await collection.insertOne(req.body);
-      const updatedUser = await collection.find().toArray();
-      res.json(updatedUser);
     }
+    
+    const updatedProducts = await collection.find().toArray();
+    res.json(updatedProducts);
   } catch (error) {
     console.error('Error creating or updating product:', error);
     res.status(500).json({ error: 'Internal server error' });
