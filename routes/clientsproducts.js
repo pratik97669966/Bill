@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-// POST (upsert) a user by ownerMobile
+// POST or PUT (upsert) a user by ownerMobile
 router.post('/', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -52,17 +52,32 @@ router.post('/', async (req, res) => {
       return res.status(500).send('Internal server error');
     }
     const collection = db.collection('clientsproducts');
-        const { _id, ...rest } = req.body;
+    const { _id, ...rest } = req.body;
     const id = _id ? new ObjectId(_id) : new ObjectId();
-    const document = { _id: id, ...rest };
-    await collection.insertOne(document);
-    const insertedDocument = await collection.findOne({ _id: id });
-    res.json(insertedDocument);
+
+    // Check if the document with the provided _id already exists
+    const existingDocument = await collection.findOne({ _id: id });
+
+    // If the document exists, update it; otherwise, insert a new document
+    if (existingDocument) {
+      // Update the existing document
+      const updateOperation = { $set: rest };
+      await collection.updateOne({ _id: id }, updateOperation);
+    } else {
+      // Insert a new document
+      const document = { _id: id, ...rest };
+      await collection.insertOne(document);
+    }
+
+    // Fetch the inserted/updated document from the collection
+    const updatedDocument = await collection.findOne({ _id: id });
+    res.json(updatedDocument);
   } catch (error) {
     console.error('Error creating or updating user:', error);
     res.status(500).send('Internal server error');
   }
 });
+
 
 // PUT (update) a user by _id
 router.put('/:id', async (req, res) => {
