@@ -9,16 +9,21 @@ router.get('/', async (req, res) => {
       return res.status(500).send('Internal server error');
     }
     const collection = db.collection('transactions');
-    const user = await collection.find().limit(100).toArray();
-    if (!user) {
-      return res.status(404).send('products not found');
+    
+    // Find the latest 100 transactions, sorted by createdAt in descending order
+    const latestTransactions = await collection.find().sort({ createdAt: -1 }).limit(100).toArray();
+    
+    if (!latestTransactions || latestTransactions.length === 0) {
+      return res.status(404).send('Transactions not found');
     }
-    res.json(user);
+    
+    res.json(latestTransactions);
   } catch (error) {
-    console.error('Error getting user:', error);
+    console.error('Error getting transactions:', error);
     res.status(500).send('Internal server error');
   }
 });
+
 // GET transactions by ownerName with a limit of 100 records
 router.get('/:ownerMobile', async (req, res) => {
   try {
@@ -49,6 +54,16 @@ router.post('/', async (req, res) => {
     const createdAt = new Date();
     req.body.createdAt = createdAt;
     await collection.insertOne(req.body);
+    const collectionClients = db.collection('clients');
+    const existingUser = await collectionClients.findOne({ ownerMobile: req.params.ownerMobile });
+    
+    if (existingUser) {
+      await collectionClients.findOneAndUpdate(
+        { ownerMobile: req.body.ownerMobile },
+        { $set: { balance: req.body.dueBalance } },
+        { returnOriginal: false }
+      );
+    }
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
