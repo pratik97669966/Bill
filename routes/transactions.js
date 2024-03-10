@@ -50,26 +50,29 @@ router.post('/', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).json({ error: 'Internal server error' });
     }
+    
     const collection = db.collection('transactions');
     const createdAt = new Date();
     req.body.createdAt = createdAt;
-    await collection.insertOne(req.body);
-    const collectionClients = db.collection('clients');
-    const existingUser = await collectionClients.findOne({ ownerMobile: req.body.ownerMobile });
     
-    if (existingUser) {
-      await collectionClients.findOneAndUpdate(
-        { ownerMobile: req.body.ownerMobile },
-        { $set: { balance: req.body.dueBalance } },
-        { returnOriginal: false }
-      );
-    }
+    // Insert transaction into the transactions collection
+    await collection.insertOne(req.body);
+    
+    // Update balance in the clients collection
+    const collectionClients = db.collection('clients');
+    await collectionClients.findOneAndUpdate(
+      { ownerMobile: req.body.ownerMobile },
+      { $set: { balance: req.body.dueBalance } },
+      { upsert: true, returnOriginal: false } // Upsert if the user does not exist
+    );
+    
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // GET monthly transactions by ownerMobile
 router.get('/monthly/:ownerMobile', async (req, res) => {
