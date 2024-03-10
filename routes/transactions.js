@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
     req.body.createdAt = createdAt;
     await collection.insertOne(req.body);
     const collectionClients = db.collection('clients');
-    const existingUser = await collectionClients.findOne({ ownerMobile: req.params.ownerMobile });
+    const existingUser = await collectionClients.findOne({ ownerMobile: req.body.ownerMobile });
     
     if (existingUser) {
       await collectionClients.findOneAndUpdate(
