@@ -6,17 +6,17 @@ router.get('/', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('products');
     const user = await collection.find().toArray();
     if (!user) {
-      return res.status(404).json({ error: 'products not found' });
+      return res.status(404).send('products not found');
     }
     res.json(user);
   } catch (error) {
     console.error('Error getting user:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Internal server error');
   }
 });
 // GET a user by ownerMobile
@@ -25,14 +25,14 @@ router.get('/:itemName', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('products');
     const user = await collection.findOne({ itemName: req.params.itemName });
     res.json(user);
   } catch (error) {
     console.error('Error getting user:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Internal server error');
   }
 });
 
@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('products');
     await collection.insertOne(req.body);
@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     console.error('Error creating or updating user:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Internal server error');
   }
 });
 // PUT (upsert) a product by id
@@ -59,7 +59,7 @@ router.put('/:id', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) }; // Construct the query using ObjectId
@@ -68,7 +68,7 @@ router.put('/:id', async (req, res) => {
     if (existingProduct) {
       // Remove _id from req.body to avoid updating it
       delete req.body._id;
-      
+
       await collection.findOneAndUpdate(
         query,
         { $set: req.body },
@@ -79,12 +79,12 @@ router.put('/:id', async (req, res) => {
       req.body._id = new ObjectId(req.params.id);
       await collection.insertOne(req.body);
     }
-    
+
     const updatedProducts = await collection.find().toArray();
     res.json(updatedProducts);
   } catch (error) {
     console.error('Error creating or updating product:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Internal server error');
   }
 });
 // DELETE a product by _id
@@ -93,7 +93,7 @@ router.delete('/:id', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) }; // Construct the query using ObjectId
@@ -102,7 +102,7 @@ router.delete('/:id', async (req, res) => {
     res.json(remainingProducts);
   } catch (error) {
     console.error('Error deleting product:', error.message);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Internal server error');
   }
 });
 

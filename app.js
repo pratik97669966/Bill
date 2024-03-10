@@ -8,6 +8,7 @@ const server = require("http").createServer(app);
 const clientsRouter = require('./routes/clients');
 const productsRouter = require('./routes/products');
 const clientsproducts = require('./routes/clientsproducts');
+const transactions = require('./routes/transactions');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
 const uri = 'mongodb+srv://billing:pratik@billing.bt47ztc.mongodb.net/?retryWrites=true&w=majority&appName=Billing';
@@ -24,6 +25,7 @@ client.connect()
         app.use('/clients', clientsRouter);
         app.use('/products', productsRouter);
         app.use('/clientproducts', clientsproducts);
+        app.use('/transactions', transactions);
         module.exports = app;
 
     })

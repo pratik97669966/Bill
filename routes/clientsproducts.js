@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error' );
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('clientsproducts');
     const user = await collection.find().toArray();
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error getting user:', error);
-    res.status(500).send('Internal server error' );
+    res.status(500).send('Internal server error');
   }
 });
 // GET a user by id
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
     }
     const collection = db.collection('clientsproducts');
     const user = await collection.findOne({ _id: new ObjectId(req.params.id) });
-    
+
     // Check if user is found
     if (!user) {
       return res.status(404).send('User not found');
@@ -89,7 +89,7 @@ router.put('/:id', async (req, res) => {
     }
     const collection = db.collection('clientsproducts');
     const id = req.params.id;
-    
+
     // Extract the _id from the request body if provided
     const { _id, ...rest } = req.body;
 
@@ -124,7 +124,7 @@ router.delete('/:id', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error' );
+      return res.status(500).send('Internal server error');
     }
     const collection = db.collection('clientsproducts');
     const query = { _id: new ObjectId(req.params.id) }; // Construct the query using ObjectId
@@ -133,7 +133,7 @@ router.delete('/:id', async (req, res) => {
     res.json(remainingProducts);
   } catch (error) {
     console.error('Error deleting product:', error.message);
-    res.status(500).send('Internal server error' );
+    res.status(500).send('Internal server error');
   }
 });
 
