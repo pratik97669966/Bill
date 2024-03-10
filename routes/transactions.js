@@ -43,16 +43,19 @@ router.post('/', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error');
+      return res.status(500).json({ error: 'Internal server error' });
     }
     const collection = db.collection('transactions');
+    const createdAt = new Date();
+    req.body.createdAt = createdAt;
     await collection.insertOne(req.body);
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 // GET monthly transactions by ownerMobile
 router.get('/monthly/:ownerMobile', async (req, res) => {
   try {
