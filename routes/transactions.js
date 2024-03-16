@@ -132,6 +132,6 @@ router.post('/range', async (req, res) => {
     console.error('Error getting transactions:', error);
     res.status(500).send('Internal server error');
   }
-});
+});52
 
 module.exports = router;
