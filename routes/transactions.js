@@ -42,7 +42,6 @@ router.get('/:ownerMobile', async (req, res) => {
 });
 
 
-// POST (upsert) a user by ownerMobile
 router.post('/', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -66,12 +65,33 @@ router.post('/', async (req, res) => {
       { upsert: true, returnOriginal: false } // Upsert if the user does not exist
     );
     
+    // Reduce quantity in the products collection
+    const collectionProducts = db.collection('products');
+    for (const product of req.body.products) {
+      const { itemName, itemId, itemQuantity } = product;
+      let query;
+      if (itemId) {
+        query = { itemId };
+      } else {
+        query = { itemName };
+      }
+      
+      // Convert itemQuantity from string to number
+      const quantityToReduce = parseInt(itemQuantity);
+      
+      await collectionProducts.updateOne(
+        query,
+        { $inc: { itemQuantity: -quantityToReduce } } // Decrement item quantity
+      );
+    }
+    
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // GET monthly transactions by ownerMobile
