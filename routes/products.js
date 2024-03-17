@@ -64,47 +64,32 @@ router.put('/update-name-price/:id', async (req, res) => {
       return res.status(500).send('Internal server error');
     }
 
-    // Extracting new name from the request body
-    const { newName } = req.body;
+    // Extracting new product data and logs from the request body
+    const { newName, newPrice } = req.body;
 
-    // Create a log entry for the name change
+    // Create a log entry for the product update
     const logEntry = {
-      title: 'NAME_PRICE_UPDATE',
-      description: "",
-      value: ""
+      title: 'PRODUCT_UPDATE',
+      description: `Updated product name to ${newName} and price to ${newPrice}`,
+      value: ''
     };
-
 
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
-    const existingProduct = await collection.findOne(query);
+    const updateData = { itemName: newName, itemPrice: newPrice, $push: { logs: logEntry } };
 
-    if (existingProduct) {
-      // Push the log entry into logs array of the existing product
-      await collection.findOneAndUpdate(
-        query,
-        { $push: { logs: logEntry }, $set: { itemName: newName } },
-        { returnOriginal: false }
-      );
-    } else {
-      // If the product does not exist, insert it with the provided _id and logs array
-      await collection.insertOne({
-        _id: new ObjectId(req.params.id),
-        itemName: newName,
-        logs: [logEntry]
-      });
-    }
+    // Perform the update operation, with upsert set to true to insert if the product does not exist
+    await collection.updateOne(query, { $set: updateData }, { upsert: true });
 
     // Fetch updated products excluding logs field
     const updatedProducts = await collection.find({}, { projection: { logs: 0 } }).toArray();
     res.json(updatedProducts);
   } catch (error) {
-    console.error('Error updating product name:', error);
+    console.error('Error updating product:', error);
     res.status(500).send('Internal server error');
   }
 });
 
-// PUT (upsert) a product by id
 router.put('/add-inventory/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -113,40 +98,28 @@ router.put('/add-inventory/:id', async (req, res) => {
       return res.status(500).send('Internal server error');
     }
 
-    // Extracting inventoryAddQuantity from the request body
-    const { inventoryAddQuantity } = req.body;
+    // Extracting new product data and logs from the request body
+    const {itemQuantity ,inventoryAddQuantity } = req.body;
 
-    // Create a log entry based on inventoryAddQuantity
+    // Create a log entry for the product update
     const logEntry = {
       title: 'INVENTORY_UPDATE',
-      description: "",
+      description: ``,
       value: inventoryAddQuantity
     };
 
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
-    const existingProduct = await collection.findOne(query);
+    const updateData = { itemQuantity: itemQuantity, $push: { logs: logEntry } };
 
-    if (existingProduct) {
-      // Push the log entry into logs array of the existing product
-      await collection.findOneAndUpdate(
-        query,
-        { $push: { logs: logEntry } },
-        { returnOriginal: false }
-      );
-    } else {
-      // If the product does not exist, insert it with the provided _id and logs array
-      await collection.insertOne({
-        _id: new ObjectId(req.params.id),
-        logs: [logEntry]
-      });
-    }
+    // Perform the update operation, with upsert set to true to insert if the product does not exist
+    await collection.updateOne(query, { $set: updateData }, { upsert: true });
 
     // Fetch updated products excluding logs field
     const updatedProducts = await collection.find({}, { projection: { logs: 0 } }).toArray();
     res.json(updatedProducts);
   } catch (error) {
-    console.error('Error creating or updating product:', error);
+    console.error('Error updating product:', error);
     res.status(500).send('Internal server error');
   }
 });
