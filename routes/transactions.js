@@ -30,14 +30,14 @@ router.get('/:ownerMobile', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error');
+      return res.status(500).send('MongoDB connection not established');
     }
     const collection = db.collection('transactions');
     const users = await collection.find({ ownerMobile: req.params.ownerMobile }).limit(100).toArray();
     res.json(users);
   } catch (error) {
     console.error('Error getting users:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('Error getting users: '+error);
   }
 });
 
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json('MongoDB connection not established');
     }
     
     const collection = db.collection('transactions');
@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send('Error creating or updating user: '+error);
   }
 });
 
