@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
     
     // Reduce quantity in the products collection
     const collectionProducts = db.collection('products');
-    for (const product of req.body.products) {
+    for (const product of req.body.productsList) {
       const { itemName, itemId, itemQuantity } = product;
       let query;
       if (itemId) {
