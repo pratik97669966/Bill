@@ -64,7 +64,7 @@ router.put('/update-name-price/:id', async (req, res) => {
       return res.status(500).send('MongoDB connection not established');
     }
 
-    // Extracting new product data and logs from the request body
+    // Extracting new product data from the request body
     const { newName, newPrice } = req.body;
 
     // Create a log entry for the product update
@@ -76,20 +76,21 @@ router.put('/update-name-price/:id', async (req, res) => {
 
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
-    const updateData = { itemName: newName, itemPrice: newPrice, $push: { logs: logEntry } };
+    const updateData = { $set: { itemName: newName, itemPrice: newPrice }, $push: { logs: logEntry } };
 
     // Perform the update operation, with upsert set to true to insert if the product does not exist
-    await collection.updateOne(query, { $set: updateData }, { upsert: true });
+    await collection.updateOne(query, updateData, { upsert: true });
 
     // Fetch updated products excluding logs field
     const updatedProducts = await collection.find({}, { projection: { logs: 0 } }).toArray();
     res.json(updatedProducts);
   } catch (error) {
     console.error('Error updating product:', error);
-    res.status(500).send('Error updating product: '+error);
+    res.status(500).send('Error updating product: ' + error);
   }
 });
 
+// PUT (upsert) a product by id
 router.put('/add-inventory/:id', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -99,28 +100,28 @@ router.put('/add-inventory/:id', async (req, res) => {
     }
 
     // Extracting new product data and logs from the request body
-    const {itemQuantity ,inventoryAddQuantity } = req.body;
+    const { itemQuantity, inventoryAddQuantity } = req.body;
 
-    // Create a log entry for the product update
+    // Create a log entry for the inventory update
     const logEntry = {
       title: 'INVENTORY_UPDATE',
-      description: ``,
+      description: `Added ${inventoryAddQuantity} items to inventory`,
       value: inventoryAddQuantity
     };
 
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
-    const updateData = { itemQuantity: itemQuantity, $push: { logs: logEntry } };
+    const updateData = { $set: { itemQuantity: itemQuantity }, $push: { logs: logEntry } };
 
     // Perform the update operation, with upsert set to true to insert if the product does not exist
-    await collection.updateOne(query, { $set: updateData }, { upsert: true });
+    await collection.updateOne(query, updateData, { upsert: true });
 
     // Fetch updated products excluding logs field
     const updatedProducts = await collection.find({}, { projection: { logs: 0 } }).toArray();
     res.json(updatedProducts);
   } catch (error) {
     console.error('Error updating product:', error);
-    res.status(500).send('Error updating product: '+error);
+    res.status(500).send('Error updating product: ' + error);
   }
 });
 
