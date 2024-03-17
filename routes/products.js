@@ -71,6 +71,7 @@ router.put('/update-name-price/:id', async (req, res) => {
     const logEntry = {
       title: 'NAME_PRICE_UPDATE',
       description: `Updated product name to ${itemName} and price to ${itemPrice}`,
+      createdAt: new Date(),
       value: ''
     };
 
@@ -106,6 +107,7 @@ router.put('/add-inventory/:id', async (req, res) => {
     const logEntry = {
       title: 'INVENTORY_UPDATE',
       description: `Added ${inventoryAddQuantity} items to inventory`,
+      createdAt: new Date(),
       value: inventoryAddQuantity
     };
 
