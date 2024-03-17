@@ -61,7 +61,7 @@ router.put('/update-name-price/:id', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error');
+      return res.status(500).send('MongoDB connection not established');
     }
 
     // Extracting new product data and logs from the request body
@@ -86,7 +86,7 @@ router.put('/update-name-price/:id', async (req, res) => {
     res.json(updatedProducts);
   } catch (error) {
     console.error('Error updating product:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('Error updating product: '+error);
   }
 });
 
@@ -95,7 +95,7 @@ router.put('/add-inventory/:id', async (req, res) => {
     const db = req.app.locals.db;
     if (!db) {
       console.error('MongoDB connection not established');
-      return res.status(500).send('Internal server error');
+      return res.status(500).send('MongoDB connection not established');
     }
 
     // Extracting new product data and logs from the request body
@@ -120,7 +120,7 @@ router.put('/add-inventory/:id', async (req, res) => {
     res.json(updatedProducts);
   } catch (error) {
     console.error('Error updating product:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('Error updating product: '+error);
   }
 });
 
