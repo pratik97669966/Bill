@@ -146,7 +146,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// GET all logs for a product by id
+// GET the latest 100 logs for a product by id sorted by createdAt
 router.get('/:id/logs', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -154,6 +154,7 @@ router.get('/:id/logs', async (req, res) => {
       console.error('MongoDB connection not established');
       return res.status(500).send('Internal server error');
     }
+    
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
 
@@ -162,13 +163,23 @@ router.get('/:id/logs', async (req, res) => {
       return res.status(404).send('Product not found');
     }
 
-    const logs = product.logs || [];
-    res.json(logs);
+    // Retrieve the latest 100 logs sorted by createdAt in descending order
+    const logs = await collection.aggregate([
+      { $match: { _id: new ObjectId(req.params.id) } },
+      { $unwind: "$logs" },
+      { $sort: { "logs.createdAt": -1 } },
+      { $limit: 100 },
+      { $group: { _id: "$_id", logs: { $push: "$logs" } } }
+    ]).toArray();
+
+    // Extract logs from the result
+    const latestLogs = logs.length > 0 ? logs[0].logs : [];
+
+    res.json(latestLogs);
   } catch (error) {
     console.error('Error retrieving logs:', error);
     res.status(500).send('Internal server error');
   }
 });
-
 
 module.exports = router;
