@@ -11,7 +11,7 @@ const clientsproducts = require('./routes/clientsproducts');
 const transactions = require('./routes/transactions');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
-const uri = 'mongodb+srv://billing:pratik@billing.bt47ztc.mongodb.net/?retryWrites=true&w=majority&appName=Billing';
+const uri = 'mongodb+srv://shaktidafoods05:shaktidafoods05@shaktida.ilifyji.mongodb.net/?retryWrites=true&w=majority&appName=Shaktida';
 // Connect to MongoDB and store the connection in app.locals
 const client = new MongoClient(uri);
 client.connect()
