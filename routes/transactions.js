@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     const latestTransactions = await collection.find().sort({ createdAt: -1 }).limit(100).toArray();
     
     if (!latestTransactions || latestTransactions.length === 0) {
-      res.json([]);
+      return res.json([]);
     }
     
     res.json(latestTransactions);
