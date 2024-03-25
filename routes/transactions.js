@@ -33,7 +33,7 @@ router.get('/:ownerMobile', async (req, res) => {
       return res.status(500).send('MongoDB connection not established');
     }
     const collection = db.collection('transactions');
-    const users = await collection.find({ ownerMobile: req.params.ownerMobile }).limit(100).toArray();
+    const users = await collection.find({ ownerMobile: req.params.ownerMobile }).sort({ createdAt: -1 }).limit(100).toArray();
     res.json(users);
   } catch (error) {
     console.error('Error getting users:', error);
