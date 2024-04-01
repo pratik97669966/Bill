@@ -9,6 +9,7 @@ const clientsRouter = require('./routes/clients');
 const productsRouter = require('./routes/products');
 const clientsproducts = require('./routes/clientsproducts');
 const transactions = require('./routes/transactions');
+const expense = require('./routes/expense');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
 const uri = 'mongodb+srv://shaktidafoods05:shaktidafoods05@shaktida.ilifyji.mongodb.net/?retryWrites=true&w=majority&appName=Shaktida';
@@ -26,8 +27,8 @@ client.connect()
         app.use('/products', productsRouter);
         app.use('/clientproducts', clientsproducts);
         app.use('/transactions', transactions);
+        app.use('/expense', expense);
         module.exports = app;
-
     })
     .catch(err => {
         console.error('Error connecting to MongoDB:', err);
