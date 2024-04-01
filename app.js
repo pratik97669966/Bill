@@ -9,9 +9,10 @@ const clientsRouter = require('./routes/clients');
 const productsRouter = require('./routes/products');
 const clientsproducts = require('./routes/clientsproducts');
 const transactions = require('./routes/transactions');
+const expense = require('./routes/expense');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
-const uri = 'mongodb+srv://billing:pratik@billing.bt47ztc.mongodb.net/?retryWrites=true&w=majority&appName=Billing';
+const uri = 'mongodb+srv://tradersmaharaj50:tradersmaharaj50@cluster0.sxbw8jn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 // Connect to MongoDB and store the connection in app.locals
 const client = new MongoClient(uri);
 client.connect()
@@ -26,6 +27,7 @@ client.connect()
         app.use('/products', productsRouter);
         app.use('/clientproducts', clientsproducts);
         app.use('/transactions', transactions);
+        app.use('/expense', expense);
         module.exports = app;
 
     })
