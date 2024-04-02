@@ -10,6 +10,7 @@ const productsRouter = require('./routes/products');
 const clientsproducts = require('./routes/clientsproducts');
 const transactions = require('./routes/transactions');
 const expense = require('./routes/expense');
+const expensetransactions = require('./routes/expensetransactions');
 const PORT = process.env.PORT || 3030;
 // MongoDB connection URI
 const uri = 'mongodb+srv://tradersmaharaj50:tradersmaharaj50@cluster0.sxbw8jn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
@@ -28,6 +29,7 @@ client.connect()
         app.use('/clientproducts', clientsproducts);
         app.use('/transactions', transactions);
         app.use('/expense', expense);
+        app.use('/expensetransactions', expensetransactions);
         module.exports = app;
 
     })
