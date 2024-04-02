@@ -57,33 +57,33 @@ router.post('/', async (req, res) => {
     // Insert transaction into the transactions collection
     await collection.insertOne(req.body);
     
-    // Update balance in the clients collection
-    const collectionClients = db.collection('clients');
-    await collectionClients.findOneAndUpdate(
-      { ownerMobile: req.body.ownerMobile },
-      { $set: { balance: req.body.dueBalance } },
-      { upsert: true, returnOriginal: false } // Upsert if the user does not exist
-    );
+    // // Update balance in the clients collection
+    // const collectionClients = db.collection('clients');
+    // await collectionClients.findOneAndUpdate(
+    //   { ownerMobile: req.body.ownerMobile },
+    //   { $set: { balance: req.body.dueBalance } },
+    //   { upsert: true, returnOriginal: false } // Upsert if the user does not exist
+    // );
     
     // Reduce quantity in the products collection
-    const collectionProducts = db.collection('products');
-    for (const product of req.body.productsList) {
-      const { itemName, itemId, itemQuantity } = product;
-      let query;
-      if (itemId) {
-        query = { itemId };
-      } else {
-        query = { itemName };
-      }
+    // const collectionProducts = db.collection('products');
+    // for (const product of req.body.productsList) {
+    //   const { itemName, itemId, itemQuantity } = product;
+    //   let query;
+    //   if (itemId) {
+    //     query = { itemId };
+    //   } else {
+    //     query = { itemName };
+    //   }
       
-      // Convert itemQuantity from string to number
-      const quantityToReduce = parseInt(itemQuantity);
+    //   // Convert itemQuantity from string to number
+    //   const quantityToReduce = parseInt(itemQuantity);
       
-      await collectionProducts.updateOne(
-        query,
-        { $inc: { itemQuantity: -quantityToReduce } } // Decrement item quantity
-      );
-    }
+    //   await collectionProducts.updateOne(
+    //     query,
+    //     { $inc: { itemQuantity: -quantityToReduce } } // Decrement item quantity
+    //   );
+    // }
     
     res.json(req.body);
   } catch (error) {

@@ -56,15 +56,17 @@ router.post('/', async (req, res) => {
     
     // Insert transaction into the transactions collection
     await collection.insertOne(req.body);
-    
-    // Update balance in the clients collection
+    const billType = req.body.billType;
+
+    // Update balance in the clients collection if not quick bill
+    if(billType != "QUICK_BILL") {
     const collectionClients = db.collection('clients');
     await collectionClients.findOneAndUpdate(
       { ownerMobile: req.body.ownerMobile },
       { $set: { balance: req.body.dueBalance } },
       { upsert: true, returnOriginal: false } // Upsert if the user does not exist
     );
-    
+    }
     // Reduce quantity in the products collection
     const collectionProducts = db.collection('products');
     for (const product of req.body.productsList) {
@@ -84,7 +86,7 @@ router.post('/', async (req, res) => {
         { $inc: { itemQuantity: -quantityToReduce } } // Decrement item quantity
       );
     }
-    
+  
     res.json(req.body);
   } catch (error) {
     console.error('Error creating or updating user:', error);
