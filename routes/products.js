@@ -65,19 +65,19 @@ router.put('/update-name-price/:id', async (req, res) => {
     }
 
     // Extracting new product data from the request body
-    const { itemName, itemPrice } = req.body;
+    const { itemName, itemPrice,boxQuantity } = req.body;
 
     // Create a log entry for the product update
     const logEntry = {
       title: 'NAME_PRICE_UPDATE',
-      description: `Updated product name to ${itemName} and price to ${itemPrice}`,
+      description: `Updated product name to ${itemName} and price to ${itemPrice} and quntity ${boxQuantity}`,
       createdAt: new Date(),
       value: ''
     };
 
     const collection = db.collection('products');
     const query = { _id: new ObjectId(req.params.id) };
-    const updateData = { $set: { itemName: itemName, itemPrice: itemPrice }, $push: { logs: logEntry } };
+    const updateData = { $set: { itemName: itemName, itemPrice: itemPrice,boxQuantity:boxQuantity }, $push: { logs: logEntry } };
 
     // Perform the update operation, with upsert set to true to insert if the product does not exist
     await collection.updateOne(query, updateData, { upsert: true });
